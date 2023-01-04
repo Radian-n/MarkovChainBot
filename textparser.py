@@ -1,7 +1,12 @@
+"""
+Parses a copy/pasted twitch chat text feed. Outputs text into a user defined file
+"""
+
+
 import re
 
 FILE_NAME = "messages.txt"
-CLEAN_NAME = "cleaned_messages.txt"
+CLEAN_NAME = "cleaned_messages2.txt"
 USERNAME = "Radian_n"
 
 
@@ -26,8 +31,8 @@ def main():
         new_text = remove_date(new_text)
         new_text = remove_links(new_text)
         new_text = remove_time_out_notifs(new_text)
-        # no longer removing commands because "its funny"
-        # new_text = remove_commands(new_text)
+        new_text = remove_commands(new_text)
+        new_text = remove_single_word_messages(new_text)
         if new_text != "":
             cleaned_messages.append(new_text)
 
@@ -35,7 +40,7 @@ def main():
     # Writes cleaned_messages to output file
     with open(CLEAN_NAME, "w", encoding="utf-8") as g:
         for message in cleaned_messages:
-            print(message)
+            # print(message)
             g.write(message)
             g.write("\n")
 
@@ -76,10 +81,19 @@ def remove_time_out_notifs(chat_message: str) -> str:
 
 
 def remove_commands(chat_message: str) -> str:
-    if bool(re.match("!", chat_message)):
+    if chat_message.lower()[0:7] == "?markov":
+        print("------- " + chat_message)
         return ""
+    # if chat_message[0] == "!":
+    #     return ""
     return chat_message
 
+
+def remove_single_word_messages(chat_message: str) -> str:
+    if " " not in chat_message:
+        print("----" + chat_message)
+        return ""
+    return chat_message
 
 
 main()
