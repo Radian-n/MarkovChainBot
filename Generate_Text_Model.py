@@ -1,8 +1,13 @@
+"""
+Generates a markov chain text model, and outputs it as a json file.
+
+"""
+
 import markovify
 import json
 
 # Training data file name
-TEXT_DATA = "cleaned_messages.txt"
+TEXT_DATA = "cleaned_messages2.txt"
 
 
 # Turn data into a list
