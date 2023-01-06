@@ -25,8 +25,7 @@ with open("Radian_Text_Model.json", "w") as json_output_file:
     json.dump(model_json, json_output_file)
 
 
-# #Import Json 
+# #Import Json
 # with open("Radian_Text_Model.json", "r") as json_import_file:
 #     reconstituted_model = markovify.NewlineText.from_json(json.load(json_import_file))
 # print(reconstituted_model.make_sentence())
-

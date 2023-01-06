@@ -13,12 +13,11 @@ USERNAME = "Radian_n"
 def main():
     cleaned_messages = []
 
-    # Imports raw messages 
+    # Imports raw messages
     f = open(FILE_NAME, "r", encoding="utf8")
     text = f.read()
     f.close()
     text_list = text.split("Moderator6-Month SubscriberArtist")
-    
 
     # Performance can be improved by re-ordering functions?
     # Messages that are not valid become empty strings.
@@ -36,14 +35,12 @@ def main():
         if new_text != "":
             cleaned_messages.append(new_text)
 
-
     # Writes cleaned_messages to output file
     with open(CLEAN_NAME, "w", encoding="utf-8") as g:
         for message in cleaned_messages:
             # print(message)
             g.write(message)
             g.write("\n")
-
 
 
 def remove_timestamp(chat_message: str) -> str:
