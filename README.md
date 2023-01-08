@@ -12,8 +12,9 @@
 
 
 ## TODO:
-- Clean project file:
-    - Create folders for raw pasted twitch messages, cleaned messages. Refactor code to account for this
+- Add inverted markov chain generation function
+- Make project extensible so easy to add other user markov generators (i.e lazzie) 
+- Add instructions to readme
 
 
 ## ISSUES:

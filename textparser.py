@@ -36,6 +36,7 @@ def clean_text():
         new_text = remove_time_out_notifs(new_text)
         new_text = remove_commands(new_text)
         new_text = remove_single_word_messages(new_text)
+        new_text = remove_at_sign(new_text)
         if new_text != "":
             cleaned_messages.append(new_text)
 
@@ -82,11 +83,9 @@ def remove_time_out_notifs(chat_message: str) -> str:
 
 
 def remove_commands(chat_message: str) -> str:
-    if chat_message.lower()[0:7] == "?markov":
+    if "?m" in chat_message.lower():
         print("------- " + chat_message)
         return ""
-    # if chat_message[0] == "!":
-    #     return ""
     return chat_message
 
 
@@ -96,5 +95,11 @@ def remove_single_word_messages(chat_message: str) -> str:
         return ""
     return chat_message
 
+
+def remove_at_sign(chat_message:str) -> str:
+    if "@" in chat_message:
+        index_location = chat_message.find("@")
+        chat_message = chat_message[:index_location-1] + " " + chat_message[index_location+1:]
+    return chat_message
 
 clean_text()
