@@ -3,15 +3,18 @@ Generates a markov chain text model, and outputs it as a json file.
 
 """
 
+import os
 import markovify
 import json
+from config.definitions import ROOT_DIR, FILE_NAME
 
-# Training data file name
-TEXT_DATA = "cleaned_messages2.txt"
+
+# Location for opening cleaned text file from textoarser.py
+cleaned_data_location = os.path.join(ROOT_DIR, "Data/CLEAN/CLEAN-" + FILE_NAME + ".txt" )
 
 
 # Turn data into a list
-with open(TEXT_DATA, "r", encoding="utf-8") as file:
+with open(cleaned_data_location, "r", encoding="utf-8") as file:
     messages = file.read()
 
 
@@ -19,13 +22,11 @@ with open(TEXT_DATA, "r", encoding="utf-8") as file:
 text_model = markovify.NewlineText(messages, state_size=1)
 
 
+# Create model output path
+markov_model_output = os.path.join(ROOT_DIR, "Models/MODEL-" + FILE_NAME + ".json")
+
 # Export text model
 model_json = text_model.to_json()
-with open("Radian_Text_Model.json", "w") as json_output_file:
+with open(markov_model_output, "w") as json_output_file:
     json.dump(model_json, json_output_file)
 
-
-# #Import Json
-# with open("Radian_Text_Model.json", "r") as json_import_file:
-#     reconstituted_model = markovify.NewlineText.from_json(json.load(json_import_file))
-# print(reconstituted_model.make_sentence())

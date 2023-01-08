@@ -2,19 +2,24 @@
 Parses a copy/pasted twitch chat text feed. Outputs text into a user defined file
 """
 
-
+import os
 import re
-
-FILE_NAME = "messages.txt"
-CLEAN_NAME = "cleaned_messages2.txt"
-USERNAME = "Radian_n"
+from config.definitions import ROOT_DIR, FILE_NAME
 
 
-def main():
+# Generates relative path for inputing raw data files: /Data/user.txt
+raw_data_location = os.path.join(ROOT_DIR, "Data/RAW/" + FILE_NAME + ".txt")
+
+# Generates a relative path for ouputting cleaned files /Data/CLEAN-user.txt
+cleaned_data_location = os.path.join(ROOT_DIR, "Data/CLEAN/CLEAN-" + FILE_NAME + ".txt")
+
+
+
+def clean_text(): 
     cleaned_messages = []
 
     # Imports raw messages
-    f = open(FILE_NAME, "r", encoding="utf8")
+    f = open(raw_data_location , "r", encoding="utf8")
     text = f.read()
     f.close()
     text_list = text.split("Moderator6-Month SubscriberArtist")
@@ -25,7 +30,7 @@ def main():
     for i in range(len(text_list)):
         text_ = text_list[i]
         new_text = remove_timestamp(text_)
-        new_text = remove_username(new_text, USERNAME)
+        new_text = remove_username(new_text, FILE_NAME)
         new_text = remove_newlines(new_text)
         new_text = remove_date(new_text)
         new_text = remove_links(new_text)
@@ -36,7 +41,7 @@ def main():
             cleaned_messages.append(new_text)
 
     # Writes cleaned_messages to output file
-    with open(CLEAN_NAME, "w", encoding="utf-8") as g:
+    with open(cleaned_data_location, "w", encoding="utf-8") as g:
         for message in cleaned_messages:
             # print(message)
             g.write(message)
@@ -93,4 +98,4 @@ def remove_single_word_messages(chat_message: str) -> str:
     return chat_message
 
 
-main()
+clean_text()

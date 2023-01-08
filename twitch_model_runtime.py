@@ -4,22 +4,23 @@ Uses the pre-generated markov text model to create messages and send them in spe
 """
 import markovify
 import json
+import os
 from twitchio.ext import commands
-from Constants import TOKEN
+from config.constants import TWITCH_TOKEN  # Create new Constants.py file in the config folder. Create TOKEN variable and assign twitch account token to it.
+from config.definitions import ROOT_DIR, FILE_NAME
 
-CHANNEL = "akiwoo"
-TREE_MODEL_JSON = "Radian_Text_Model.json"
-
+CHANNEL_LIST = ["akiwoo", "radian_n"]
+TREE_MODEL_JSON = os.path.join(ROOT_DIR, "Models/MODEL-" + FILE_NAME + ".json")
 
 # Open Markov Chain Text Model
-with open(TREE_MODEL_JSON, "r") as json_import_file:
+with open(TREE_MODEL_JSON, "r",) as json_import_file:
     reconstituted_model = markovify.NewlineText.from_json(json.load(json_import_file))
 
 
 class Bot(commands.Bot):
     def __init__(self):
         # Initialise our Bot with our access token, prefix and a list of channels to join on boot...
-        super().__init__(token=TOKEN, prefix="?", initial_channels=[CHANNEL])
+        super().__init__(token=TWITCH_TOKEN, prefix="?", initial_channels=CHANNEL_LIST)
 
     async def event_ready(self):
         # We are logged in and ready to chat and use commands...
