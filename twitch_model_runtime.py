@@ -6,14 +6,18 @@ import markovify
 import json
 import os
 from twitchio.ext import commands
-from config.constants import TWITCH_TOKEN  # Create new Constants.py file in the config folder. Create TOKEN variable and assign twitch account token to it.
-from config.definitions import ROOT_DIR, FILE_NAME
+from config.constants import (
+    TWITCH_TOKEN,
+)  # Create new Constants.py file in the config folder. Create TOKEN variable and assign twitch account token to it.
+from config.definitions import ROOT_DIR, FILE_NAME, CHANNEL_LIST
 
-CHANNEL_LIST = ["akiwoo", "radian_n"]
 TREE_MODEL_JSON = os.path.join(ROOT_DIR, "Models/MODEL-" + FILE_NAME + ".json")
 
 # Open Markov Chain Text Model
-with open(TREE_MODEL_JSON, "r",) as json_import_file:
+with open(
+    TREE_MODEL_JSON,
+    "r",
+) as json_import_file:
     reconstituted_model = markovify.NewlineText.from_json(json.load(json_import_file))
 
 

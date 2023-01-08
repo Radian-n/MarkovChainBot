@@ -14,12 +14,11 @@ raw_data_location = os.path.join(ROOT_DIR, "Data/RAW/" + FILE_NAME + ".txt")
 cleaned_data_location = os.path.join(ROOT_DIR, "Data/CLEAN/CLEAN-" + FILE_NAME + ".txt")
 
 
-
-def clean_text(): 
+def clean_text():
     cleaned_messages = []
 
     # Imports raw messages
-    f = open(raw_data_location , "r", encoding="utf8")
+    f = open(raw_data_location, "r", encoding="utf8")
     text = f.read()
     f.close()
     text_list = text.split("Moderator6-Month SubscriberArtist")

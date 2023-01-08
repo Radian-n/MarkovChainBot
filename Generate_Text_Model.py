@@ -10,7 +10,7 @@ from config.definitions import ROOT_DIR, FILE_NAME
 
 
 # Location for opening cleaned text file from textoarser.py
-cleaned_data_location = os.path.join(ROOT_DIR, "Data/CLEAN/CLEAN-" + FILE_NAME + ".txt" )
+cleaned_data_location = os.path.join(ROOT_DIR, "Data/CLEAN/CLEAN-" + FILE_NAME + ".txt")
 
 
 # Turn data into a list
@@ -29,4 +29,3 @@ markov_model_output = os.path.join(ROOT_DIR, "Models/MODEL-" + FILE_NAME + ".jso
 model_json = text_model.to_json()
 with open(markov_model_output, "w") as json_output_file:
     json.dump(model_json, json_output_file)
-
