@@ -54,9 +54,16 @@ def generate_text(person:str, word:str=None):
             suffix_gen = normal_model.make_sentence_with_start(word, strict=False)
             word_gen = prefix_gen_text + suffix_gen
             return word_gen
-        except:
+        except:  # Ugly solution to handle broken exception raising in markovify function make_sentence_with_start()
             return f"{person} hasn't said {word} Sadge"
-        
+
+
+def get_chatters() -> str:
+    chatter_list = ""
+    for key in model_dict.keys():
+        chatter_list += key + ", "
+    chatter_list = chatter_list[:-2]
+    return chatter_list
         
 
 
@@ -100,11 +107,17 @@ class Bot(commands.Bot):
         command = message_content_list[0][1:]
         person = message_content_list[1].capitalize()
 
-        if len(message_content_list) == 2:
+        # Checks that called model exists
+        if person not in model_dict.keys():
+            await ctx.send(f"{ctx.author.name} oopsies, try one of these names: {get_chatters()}")
+        
+        # Generate a random markov chain text
+        elif len(message_content_list) == 2:
             generated_text = generate_text(person)
             await ctx.send(generated_text)
 
-        if len(message_content_list) >= 3:
+        # Generate a markov chain text using a prompt word passed from message argument [2]
+        elif len(message_content_list) >= 3:
             word_prompt = message_content_list[2] 
             generated_text = generate_text(person, word_prompt)
             await ctx.send(generated_text)
@@ -124,10 +137,8 @@ class Bot(commands.Bot):
 
     @commands.command(name="chatters")
     async def chatters(self, ctx: commands.Context):
-        chatter_list = ""
-        for key in model_dict.keys():
-            chatter_list += key + ", "
-        await ctx.send(f"Currently generated models for: {chatter_list[:-2]}.")
+        await ctx.send(f"Currently generated models for: {get_chatters()}.")
+
 
 
 
