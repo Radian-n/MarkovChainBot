@@ -97,9 +97,12 @@ def remove_single_word_messages(chat_message: str) -> str:
 
 
 def remove_at_sign(chat_message:str) -> str:
-    if "@" in chat_message:
+    while "@" in chat_message:
         index_location = chat_message.find("@")
-        chat_message = chat_message[:index_location-1] + " " + chat_message[index_location+1:]
+        if index_location == 0:
+            chat_message = chat_message[1:]
+        else:
+            chat_message = chat_message[:index_location-1] + " " + chat_message[index_location+1:]
     return chat_message
 
 clean_text()
