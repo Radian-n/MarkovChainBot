@@ -11,14 +11,59 @@ from config.constants import (
 )  # Create new Constants.py file in the config folder. Create TOKEN variable and assign twitch account token to it.
 from config.definitions import ROOT_DIR, FILE_NAME, CHANNEL_LIST
 
-TREE_MODEL_JSON = os.path.join(ROOT_DIR, "Models/MODEL-" + FILE_NAME + ".json")
+# normal_model_path = os.path.join(ROOT_DIR, "Models/MODELn-" + FILE_NAME + ".json")
+# inverse_model_path = os.path.join(ROOT_DIR, "Models/MODELi-" + FILE_NAME + ".json")
 
-# Open Markov Chain Text Model
-with open(
-    TREE_MODEL_JSON,
-    "r",
-) as json_import_file:
-    reconstituted_model = markovify.NewlineText.from_json(json.load(json_import_file))
+def open_model(model_path):
+    with open(model_path, "r") as json_in_file:
+        return markovify.NewlineText.from_json(json.load(json_in_file))
+
+def generate_model_dictionary():
+    models_return = {}
+    # Opens models from within the /Models/ sub-directory and add to models dict
+    for filename in os.listdir(models_path):
+        opened_model = open_model(models_path + filename)
+        user = filename[7:].split(".")[0]
+        model_type = filename[5:6]
+
+        # For each user (i.e. Radian_n) both the normal and inverted models are added to the user's dictionary
+        # The model keys are 'n' for normal model and 'i' for inverted model
+        if user not in models_return:
+            models_return[user] = {model_type: opened_model}
+        else:
+            models_return[user][model_type] = opened_model
+    return models_return
+
+
+def generate_text(person:str, word:str=None):
+    normal_model = model_dict[person]["n"]
+    inverted_model = model_dict[person]["i"]
+
+    if word is None:
+        # Generate random markov chain WITHOUT a prompt word
+        return normal_model.make_sentence()
+
+    else:
+        # normal_text = normal_model.make_sentence_with_start(word, strict=False)
+        # Uses the inverted markov model to generate text before the prompt word (prefix).
+        # Normal markov model generates text following prompt word (suffix).
+        # Then combines the prefix and suffix to form a generate piece of text AROUND the prmopt word
+        try:
+            prefix_gen = inverted_model.make_sentence_with_start(word, strict=False)[len(word):]  # Remove prompt word otherwise it appears in output twice 
+            prefix_gen_text = " ".join(reversed(prefix_gen.split(" "))) # Text from inverted model needs to be reversed back to normal order
+            suffix_gen = normal_model.make_sentence_with_start(word, strict=False)
+            word_gen = prefix_gen_text + suffix_gen
+            return word_gen
+        except:
+            return f"{person} hasn't said {word} Sadge"
+        
+        
+
+
+models_path = os.path.join(ROOT_DIR, "Models/")
+model_dict = generate_model_dictionary()
+
+print(model_dict)
 
 
 class Bot(commands.Bot):
@@ -48,33 +93,42 @@ class Bot(commands.Bot):
         # Send a hello back!
         await ctx.send(f"Hello {ctx.author.name}!")
 
+    @commands.command(name="m")
+    async def m(self, ctx: commands.Context):
+        # Spilt recieved command into components
+        message_content_list = ctx.message.content.split(" ")
+        command = message_content_list[0][1:]
+        person = message_content_list[1].capitalize()
+
+        if len(message_content_list) == 2:
+            generated_text = generate_text(person)
+            await ctx.send(generated_text)
+
+        if len(message_content_list) >= 3:
+            word_prompt = message_content_list[2] 
+            generated_text = generate_text(person, word_prompt)
+            await ctx.send(generated_text)
+
+
     @commands.command(name="markov")
     async def markov(self, ctx: commands.Context):
-        args = ctx.message.content.split(" ")
+        sender = ctx.author.name
+        print(sender)
+        await ctx.send(f"@{sender} this command has been changed to ?m <name>. Type ?help for more info ")
 
-        # Generates markov chat using word in argument as starting point
-        if len(args) >= 2:
-            # Tries to generate message using provided word as STARTING word only
-            try:
-                generated_message = reconstituted_model.make_sentence_with_start(
-                    args[1], strict=True
-                )
-            except KeyError:
-                # Tries to generate message using provided word from ANYWHERE in a message (i.e. not just checking starting words)
-                try:
-                    generated_message = reconstituted_model.make_sentence_with_start(
-                        args[1], strict=False
-                    )
-                except KeyError:
-                    generated_message = (
-                        f"(Radian has never used {args[1]} in chat) Sadge"
-                    )
 
-        # Generates markov chain without starting state
-        else:
-            generated_message = reconstituted_model.make_sentence()
+    @commands.command(name="help")
+    async def help(self, ctx: commands.Context):
+        await ctx.send("""To generate user messages: "?m <name>" or "?m <name> <word-prompt>".    To get a list of which people have had chat models generated, type "?chatters" """)
 
-        await ctx.send(generated_message)
+
+    @commands.command(name="chatters")
+    async def chatters(self, ctx: commands.Context):
+        chatter_list = ""
+        for key in model_dict.keys():
+            chatter_list += key + ", "
+        await ctx.send(f"Currently generated models for: {chatter_list[:-2]}.")
+
 
 
 bot = Bot()
