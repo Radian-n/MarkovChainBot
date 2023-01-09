@@ -21,7 +21,7 @@ def clean_text():
     f = open(raw_data_location, "r", encoding="utf8")
     text = f.read()
     f.close()
-    text_list = text.split("Moderator6-Month SubscriberArtist")
+    text_list = text.split("6-Month Subscriber")
 
     # Performance can be improved by re-ordering functions?
     # Messages that are not valid become empty strings.
@@ -37,6 +37,7 @@ def clean_text():
         new_text = remove_commands(new_text)
         new_text = remove_single_word_messages(new_text)
         new_text = remove_at_sign(new_text)
+        new_text = remove_timed_out(new_text)
         if new_text != "":
             cleaned_messages.append(new_text)
 
@@ -86,6 +87,11 @@ def remove_commands(chat_message: str) -> str:
     if "?m" in chat_message.lower():
         print("------- " + chat_message)
         return ""
+    try:
+        if (chat_message.lower()[0] == "!") or (chat_message.lower()[0] == "$"):
+            return ""
+    except IndexError:
+        return ""
     return chat_message
 
 
@@ -103,6 +109,14 @@ def remove_at_sign(chat_message:str) -> str:
             chat_message = chat_message[1:]
         else:
             chat_message = chat_message[:index_location-1] + " " + chat_message[index_location+1:]
+    return chat_message
+
+def remove_timed_out(chat_message: str) -> str:
+    if "timed out zaxthedude" in chat_message:
+        mod_list = ["lasershieldvr", "danskacreme", "jimmydorry", "streamelements", "akiwoo", "radian_n", "dots"]
+        for mod in mod_list:
+            if mod in chat_message.lower():
+                return ""
     return chat_message
 
 clean_text()
