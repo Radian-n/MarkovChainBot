@@ -11,8 +11,12 @@ from config.constants import (
 )  # Create new Constants.py file in the config folder. Create TOKEN variable and assign twitch account token to it.
 from config.definitions import ROOT_DIR, FILE_NAME, CHANNEL_LIST
 
-# normal_model_path = os.path.join(ROOT_DIR, "Models/MODELn-" + FILE_NAME + ".json")
-# inverse_model_path = os.path.join(ROOT_DIR, "Models/MODELi-" + FILE_NAME + ".json")
+
+chatter_alt_names_dict = {"Radian": "Radian_n",
+                          "Alfa": "AlfaAnanas",
+                          "Lazzie": "LazzieTheDino",
+                          "Zax": "Zaxthedude"}
+
 
 def open_model(model_path):
     with open(model_path, "r") as json_in_file:
@@ -41,6 +45,8 @@ def generate_text(person:str, word:str=None):
 
     if word is None:
         # Generate random markov chain WITHOUT a prompt word
+        print("normal model")
+        print(person, word, normal_model)
         return normal_model.make_sentence()
 
     else:
@@ -53,9 +59,10 @@ def generate_text(person:str, word:str=None):
             prefix_gen_text = " ".join(reversed(prefix_gen.split(" "))) # Text from inverted model needs to be reversed back to normal order
             suffix_gen = normal_model.make_sentence_with_start(word, strict=False)
             word_gen = prefix_gen_text + suffix_gen
+            print("inverted model")
             return word_gen
-        except:  # Ugly solution to handle broken exception raising in markovify function make_sentence_with_start()
-            return f"{person} hasn't said {word} Sadge"
+        except KeyError:  # Ugly solution to handle broken exception raising in markovify function make_sentence_with_start()
+            return f"< hasn't said {word} Sadge >"
 
 
 def get_chatters() -> str:
@@ -107,6 +114,10 @@ class Bot(commands.Bot):
         command = message_content_list[0][1:]
         person = message_content_list[1].capitalize()
 
+        # Checks for alternative spellings
+        if person in chatter_alt_names_dict.keys():
+            person = chatter_alt_names_dict[person]
+
         # Checks that called model exists
         if person not in model_dict.keys():
             await ctx.send(f"{ctx.author.name} oopsies, try one of these names: {get_chatters()}")
@@ -132,12 +143,13 @@ class Bot(commands.Bot):
 
     @commands.command(name="help")
     async def help(self, ctx: commands.Context):
-        await ctx.send("""To generate user messages: "?m <name>" or "?m <name> <word-prompt>".    To get a list of which people have had chat models generated, type "?chatters" """)
+        await ctx.send("""To generate user messages: "?m <name>" or "?m <name> <word-prompt>".    To get a list of which people have had chat models generated, type "?chatters". 
+                          The <word-promp> argument is kinda buggy so it sometimes doesnt work""")
 
 
     @commands.command(name="chatters")
     async def chatters(self, ctx: commands.Context):
-        await ctx.send(f"Currently generated models for: {get_chatters()}.")
+        await ctx.send(f"Available markov models for: {get_chatters()}.")
 
 
 
