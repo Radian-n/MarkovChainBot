@@ -12,8 +12,10 @@
 
 
 ## TODO:
-- Add inverted markov chain generation function
-- Make project extensible so easy to add other user markov generators (i.e lazzie) 
+- Re-make textparser.py to work better
+    - make FILE_NAME local to file?
+    - make parser require less manual input
+    - Parser currently doesnt correctly remove mod messages (i.e. danskacreme timed out <user>)
 - Add instructions to readme
 
 
