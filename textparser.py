@@ -7,37 +7,42 @@ import re
 from config.definitions import ROOT_DIR, FILE_NAME
 
 
+# User Set Variables
+CHAT_USERNAME = "Radian_n"
+SPLIT_STRING = "Moderator6-Month SubscriberArtist"  # From end of time stamp to just before start of username
+CHANNEL_MOD_LIST = ["lasershieldvr", "danskacreme", "jimmydorry", "streamelements", "akiwoo", "radian_n", "dots", "supibot", "unknown"]
+
 # Generates relative path for inputing raw data files: /Data/user.txt
 raw_data_location = os.path.join(ROOT_DIR, "Data/RAW/" + FILE_NAME + ".txt")
-
 # Generates a relative path for ouputting cleaned files /Data/CLEAN-user.txt
 cleaned_data_location = os.path.join(ROOT_DIR, "Data/CLEAN/CLEAN-" + FILE_NAME + ".txt")
 
 
 def clean_text():
+    # List that cleaned messages are appended to
     cleaned_messages = []
 
     # Imports raw messages
     f = open(raw_data_location, "r", encoding="utf8")
     text = f.read()
     f.close()
-    text_list = text.split("6-Month Subscriber")
+    text_list = text.split(SPLIT_STRING)
 
     # Performance can be improved by re-ordering functions?
     # Messages that are not valid become empty strings.
     # non-empty strings are added to the cleaned_messages list.
     for i in range(len(text_list)):
-        text_ = text_list[i]
+        text_ = text_list[i].strip()
         new_text = remove_timestamp(text_)
-        new_text = remove_username(new_text, FILE_NAME)
+        new_text = remove_username(new_text, CHAT_USERNAME)
         new_text = remove_newlines(new_text)
         new_text = remove_date(new_text)
         new_text = remove_links(new_text)
-        new_text = remove_time_out_notifs(new_text)
+        # new_text = remove_time_out_notifs(new_text)  # REPLACED BY remove_timed_out()
         new_text = remove_commands(new_text)
-        new_text = remove_single_word_messages(new_text)
         new_text = remove_at_sign(new_text)
         new_text = remove_timed_out(new_text)
+        new_text = remove_single_word_messages(new_text)
         if new_text != "":
             cleaned_messages.append(new_text)
 
@@ -75,12 +80,13 @@ def remove_links(chat_message: str) -> str:
     return chat_message
 
 
-def remove_time_out_notifs(chat_message: str) -> str:
-    if bool(re.search("unknown timed out", chat_message)):
-        index = chat_message.find("unknown timed out")
-        output_text = chat_message[:index]
-        return output_text
-    return chat_message
+# ------   REPLACED BY remove_timed_out()   --------- 
+# def remove_time_out_notifs(chat_message: str) -> str:
+#     if bool(re.search("unknown timed out", chat_message)):
+#         index = chat_message.find("unknown timed out")
+#         output_text = chat_message[:index]
+#         return output_text
+#     return chat_message
 
 
 def remove_commands(chat_message: str) -> str:
@@ -111,12 +117,13 @@ def remove_at_sign(chat_message:str) -> str:
             chat_message = chat_message[:index_location-1] + " " + chat_message[index_location+1:]
     return chat_message
 
+
 def remove_timed_out(chat_message: str) -> str:
-    if "timed out zaxthedude" in chat_message:
-        mod_list = ["lasershieldvr", "danskacreme", "jimmydorry", "streamelements", "akiwoo", "radian_n", "dots"]
-        for mod in mod_list:
+    if f"timed out {CHAT_USERNAME.lower()}"  in chat_message.lower():
+        for mod in CHANNEL_MOD_LIST:
             if mod in chat_message.lower():
                 return ""
     return chat_message
+
 
 clean_text()

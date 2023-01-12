@@ -13,9 +13,15 @@ from config.definitions import ROOT_DIR, FILE_NAME, CHANNEL_LIST
 
 
 chatter_alt_names_dict = {"Radian": "Radian_n",
+
                           "Alfa": "AlfaAnanas",
+                          "Alfaananas": "AlfaAnanas", 
+
                           "Lazzie": "LazzieTheDino",
-                          "Zax": "Zaxthedude"}
+                          "Lazziethedino": "LazzieTheDino",
+                          
+                          "Zax": "Zaxthedude",
+                          "ZaxTheDude": "Zaxthedude"}
 
 
 def open_model(model_path):
@@ -113,10 +119,12 @@ class Bot(commands.Bot):
         message_content_list = ctx.message.content.split(" ")
         command = message_content_list[0][1:]
         person = message_content_list[1].capitalize()
+        print(person)
 
         # Checks for alternative spellings
         if person in chatter_alt_names_dict.keys():
             person = chatter_alt_names_dict[person]
+            print(person)
 
         # Checks that called model exists
         if person not in model_dict.keys():
