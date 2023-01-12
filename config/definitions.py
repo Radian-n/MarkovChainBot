@@ -1,8 +1,8 @@
 import os
 
 # User setup:
-FILE_NAME = "AlfaAnanas"  # Also expected twitch username. This is used to parse/clean file in remove_name() function
-CHANNEL_LIST = ["radian_n","akiwoo"]
+FILE_NAME = "radian_n"  # Use ALL LOWERCASE
+CHANNEL_LIST = ["radian_n","akiwoo", "soapsudstv"]
 
 
 # Don't touch

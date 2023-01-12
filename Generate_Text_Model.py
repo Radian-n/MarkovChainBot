@@ -30,8 +30,6 @@ def main():
     output(inverse_model, inverse_model_output)
 
 
-
-
 def generate_normal_markov_model(corpus:str):
     # Generate markov text model using new line delimination
     normal_model = markovify.NewlineText(corpus, state_size=2)
@@ -49,7 +47,6 @@ def generate_inverse_markov_model(corpus:str):
     # Generate inverse model from reversed corpus
     inverse_model = markovify.NewlineText(corpus_rev, state_size=2)
     return inverse_model
-
 
 
 def output(model, output_path):

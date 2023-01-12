@@ -22,3 +22,4 @@
 ## ISSUES:
 ### twitch_model_runtime.py
 - make_sentence_with_start(strict=False) breaks when it selects a word at the end of the sentence (Still occurs even when single word messages are removed.)
+- Punctuation causing issues limiting model depth? 
