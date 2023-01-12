@@ -12,16 +12,26 @@ from config.constants import (
 from config.definitions import ROOT_DIR, FILE_NAME, CHANNEL_LIST
 
 
-chatter_alt_names_dict = {"Radian": "Radian_n",
+chatter_alt_names_dict = {"radian": "radian_n",
 
-                          "Alfa": "AlfaAnanas",
-                          "Alfaananas": "AlfaAnanas", 
+                          "alfa": "alfaananas",
+                          "alfaananas": "alfaananas", 
 
-                          "Lazzie": "LazzieTheDino",
-                          "Lazziethedino": "LazzieTheDino",
+                          "lazzie": "lazziethedino",
+                          "lazziethedino": "lazziethedino",
+
+                          "zax": "zaxthedude",
+                          "zaxTheDude": "zaxthedude",
                           
-                          "Zax": "Zaxthedude",
-                          "ZaxTheDude": "Zaxthedude"}
+                          "soap": "soapsudstv",
+                          "soapsudsTV": "soapsudstv",
+
+                          "river": "riveruk_",
+                          "riveruk": "riveruk_",
+
+                          "emilyy": "hiemilyy",
+                          "hiemily": "hiemilyy"
+                          }
 
 
 def open_model(model_path):
@@ -48,30 +58,52 @@ def generate_model_dictionary():
 def generate_text(person:str, word:str=None):
     normal_model = model_dict[person]["n"]
     inverted_model = model_dict[person]["i"]
+    generated_message = ""
 
     if word is None:
         # Generate random markov chain WITHOUT a prompt word
-        print("normal model")
-        print(person, word, normal_model)
-        return normal_model.make_sentence()
+        generated_message = normal_model.make_sentence()
 
     else:
         # normal_text = normal_model.make_sentence_with_start(word, strict=False)
         # Uses the inverted markov model to generate text before the prompt word (prefix).
         # Normal markov model generates text following prompt word (suffix).
         # Then combines the prefix and suffix to form a generate piece of text AROUND the prmopt word
-        try:
-            prefix_gen = inverted_model.make_sentence_with_start(word, strict=False)[len(word):]  # Remove prompt word otherwise it appears in output twice 
-            prefix_gen_text = " ".join(reversed(prefix_gen.split(" "))) # Text from inverted model needs to be reversed back to normal order
+        # try:
+            # prefix_gen = inverted_model.make_sentence_with_start(word, strict=False)[len(word):]  # Remove prompt word otherwise it appears in output twice 
+            # prefix_gen_text = " ".join(reversed(prefix_gen.split(" "))) # Text from inverted model needs to be reversed back to normal order
+            # suffix_gen = normal_model.make_sentence_with_start(word, strict=False)
+            # word_gen = prefix_gen_text + suffix_gen
+            # return word_gen
+        # except:  # Ugly solution to handle broken exception raising in markovify function make_sentence_with_start()
+        #     prefix_gen = inverted_model.make_sentence_with_start(word, strict=False)[len(word):]  # Remove prompt word otherwise it appears in output twice 
+        #     prefix_gen_text = " ".join(reversed(prefix_gen.split(" "))) # Text from inverted model needs to be reversed back to normal order
+        #     return prefix_gen_text + " " + word
+
+        try: 
             suffix_gen = normal_model.make_sentence_with_start(word, strict=False)
-            word_gen = prefix_gen_text + suffix_gen
-            print("inverted model")
-            return word_gen
-        except KeyError:  # Ugly solution to handle broken exception raising in markovify function make_sentence_with_start()
-            return f"< hasn't said {word} Sadge >"
+            print("suffix")
+            generated_message = suffix_gen
+
+        except:
+            print("prefix")
+            prefix_gen = inverted_model.make_sentence_with_start(word, strict=False)
+            prefix_gen_text = " ".join(reversed(prefix_gen.split(" "))) # Text from inverted model needs to be reversed back to normal order
+            generated_message = prefix_gen_text
+    try:
+        print(generated_message)
+        generated_message = generated_message[0:499]
+    except IndexError:
+        ...
+    except TypeError:
+        print(generated_message)
+        generated_message = ""
+        print(generated_message)
+    return generated_message
 
 
 def get_chatters() -> str:
+    """ Returns chatters currently loaded """
     chatter_list = ""
     for key in model_dict.keys():
         chatter_list += key + ", "
@@ -118,13 +150,12 @@ class Bot(commands.Bot):
         # Spilt recieved command into components
         message_content_list = ctx.message.content.split(" ")
         command = message_content_list[0][1:]
-        person = message_content_list[1].capitalize()
-        print(person)
+        person = message_content_list[1].lower()
+        print(ctx.author.name, person, message_content_list)
 
         # Checks for alternative spellings
         if person in chatter_alt_names_dict.keys():
             person = chatter_alt_names_dict[person]
-            print(person)
 
         # Checks that called model exists
         if person not in model_dict.keys():
