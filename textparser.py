@@ -7,9 +7,11 @@ import re
 from config.definitions import ROOT_DIR, FILE_NAME
 
 
-# User Set Variables
+# User Set Variables to parse and clean chat messages 
 CHAT_USERNAME = "Radian_n"
-SPLIT_STRING = "Moderator6-Month SubscriberArtist"  # From end of time stamp to just before start of username
+# From end of time stamp to just before start of username
+SPLIT_STRING = "Moderator6-Month SubscriberArtist"
+# List of all previous moderators of the twitch channel. This removes any ban/timeout messages from the chatlogs
 CHANNEL_MOD_LIST = ["lasershieldvr", "danskacreme", "jimmydorry", "streamelements", "akiwoo", "radian_n", "dots", "supibot", "unknown"]
 
 # Generates relative path for inputing raw data files: /Data/user.txt
