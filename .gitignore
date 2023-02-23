@@ -1,7 +1,8 @@
 # Poject specific
 Constants.py
-Data/
-Models/
+Data/CLEAN/*
+Data/RAW/*
+Models/*
 
 
 # Byte-compiled / optimized / DLL files
