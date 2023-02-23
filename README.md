@@ -5,14 +5,14 @@
 ### 1) Initial setup:
 
 1. In the 'config' folder, create `constants.py`
-2. In `constants.py` add TWITCH_TOKEN = _____ (use [this](https://twitchtokengenerator.com/) to generate your token)
+2. In `constants.py` add TWITCH_TOKEN = "your token here" (use [this](https://twitchtokengenerator.com/) to generate your token)
 
 
 ### 2) Clean text using textparser.py:
 
 1. You must be a moderator of the twitch channel you wish to get data from.
-2. Substitute the twitch channel you moderate into TwitchStreamerUsername and the user's chat messages you wish to access into 
-TwitchChatterUsername: https://www.twitch.tv/popout/TwitchStreamerUsername/viewercard/TwitchChatterUsername?popout= 
+2. Substitute the twitch channel you moderate into *TwitchStreamerUsername* and the user's chat messages you wish to access into 
+*TwitchChatterUsername*: https://www.twitch.tv/popout/TwitchStreamerUsername/viewercard/TwitchChatterUsername?popout= 
 3. Within the "simplebar-content" class div's child, change "position: relative" to "position: absolute" and let the window scroll to the top of the user's chat history.
 4. Ctrl + a, and then copy.
 5. within Data/RAW/ create a new text file with the user's twitch name (in lowercase) as the file name. e.g: radian_n.txt (Create Data/RAW/ if it doesnt exist)
@@ -57,7 +57,7 @@ Once the models have been generated:
 - Re-make textparser.py to work better
     - make FILE_NAME local to file?
     - make parser require less manual input
-    - Parser currently doesnt correctly remove mod messages (i.e. danskacreme timed out <user>)
+    - Parser currently doesnt correctly remove mod messages (i.e. danskacreme timed out <"user">)
 - Add instructions to readme
 
 
