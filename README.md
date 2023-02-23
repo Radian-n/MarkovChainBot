@@ -8,7 +8,7 @@
 
 
 ## User chat history url
-- https://www.twitch.tv/popout/akiwoo/viewercard/radian_n?popout=
+- https://www.twitch.tv/popout/**TwitchStreamerUsername**/viewercard/**TwitchChatterUsername**?popout=
 
 
 ## TODO:
